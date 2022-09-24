@@ -161,6 +161,7 @@ public class Robot extends TimedRobot {
 
         SmartDashboard.putNumber("Drive L", driveSystem.getDistancePassedLeftM());
         SmartDashboard.putNumber("Drive R", driveSystem.getDistancePassedRightM());
+        
 
         SmartDashboard.putNumber("Shooter Pos", towerSystem.getTowerPosition());
         SmartDashboard.putNumber("Shooter RPM", shootSystem.getShooterRpm());
@@ -169,10 +170,15 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Has Ball", feederSystem.HasBall()); //beware
         SmartDashboard.putBoolean("'is zeroed'", towerSystem.IsZeroed());
 
+        SmartDashboard.putBoolean("Elevator Solenoid", elevatorSystem.getSolenoid());
+        SmartDashboard.putNumber("Left Arm", elevatorSystem.getDistancePassedLeft());
+        SmartDashboard.putNumber("Right Arm", elevatorSystem.getDistancePassedRight());
+
         SmartDashboard.putNumber("Vision Distance", limeLightImageProcessing.getTargetDistance());
         SmartDashboard.putNumber("Vision Horizontal Offset", limeLightImageProcessing.TxOffset());
         SmartDashboard.putNumber("interpolation rpm", NewAutomaticShootingCommand.rpm);
         SmartDashboard.putNumber("interpolation rpm", interrpm);
+        
 
         if(towerSystem.IsZeroed()){
             towerSystem.resetTowerPosition();
@@ -191,12 +197,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-
+        new TogglePressure(elevatorSystem).schedule();
     }
 
     @Override
     public void teleopPeriodic() {
-
+        new MoveElevatorUp(elevatorSystem).schedule();
     }
 
     @Override

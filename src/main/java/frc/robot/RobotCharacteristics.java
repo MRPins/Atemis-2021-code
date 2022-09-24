@@ -25,4 +25,16 @@ public class RobotCharacteristics {
     public static final double SHOOTER_WHEEL_RADIUS_M = 2;
     // for circle -> I = M * r^2
     public static final double SHOOTER_MOMENT_OF_INERTIA = SHOOTER_WHEEL_MASS_KG * Math.pow(SHOOTER_WHEEL_RADIUS_M, 2);
+
+    //ELEVATOR
+    public static final DCMotor ELEVATOR_MOTORS = DCMotor.getCIM(2);
+    public static final double ELEVATOR_GEAR_RATIO = 4.2;
+    public static final double ELEVATOR_GEARING = 1.5;
+    public static final double ELEVATOR_ARM_MASS_KG = 2;
+    public static final double ELEVATOR_WHEEL_RADIUS_M = 2.4;
+    public static final double ELEVATOR_MOMENT_OF_INERTIA = ELEVATOR_ARM_MASS_KG * Math.pow(ELEVATOR_WHEEL_RADIUS_M, 2);
+    public static final double ELEVATOR_ARM_LENGTH_M = 1;
+    public static final double ELEVATOR_MIN_ARM_ANGLE_RAN = 0;
+    public static final double ELEVATOR_MAX_ARM_ANGLE_RAN = Math.toRadians(180);
+    public static final double ELEVATOR_WHEEL_CIRCUMEFERENCE_M = 0.5 * Math.PI;
 }
