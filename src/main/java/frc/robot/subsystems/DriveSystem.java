@@ -33,11 +33,6 @@ public class DriveSystem extends SubsystemBase {
         talonRR = new WPI_TalonFX(3);
         talonRF = new WPI_TalonFX(4);
 
-        talonLF.setInverted(false);
-        talonLR.setInverted(false);
-        talonRF.setInverted(false);
-        talonRR.setInverted(false);
-
         if (Robot.isSimulation()) {
             driveTrainSim = new DifferentialDrivetrainSim(
                     RobotCharacteristics.DRIVE_MOTORS,
@@ -50,6 +45,11 @@ public class DriveSystem extends SubsystemBase {
             );
         } else {
             driveTrainSim = null;
+
+            talonLF.setInverted(false);
+            talonLR.setInverted(false);
+            talonRF.setInverted(false);
+            talonRR.setInverted(false);
         }
 
         field = new Field2d();
@@ -102,8 +102,8 @@ public class DriveSystem extends SubsystemBase {
 
     public void drive_func(double lSpeed, double rSpeed) {
         if (lSpeed > Constants.MIN_SPEED || lSpeed < -Constants.MIN_SPEED || rSpeed < -Constants.MIN_SPEED || rSpeed > Constants.MIN_SPEED) {
-            talonLR.set(-lSpeed * 1.5);
-            talonLF.set(-lSpeed * 1.5);
+            talonLR.set(lSpeed * 1.5);
+            talonLF.set(lSpeed * 1.5);
             talonRR.set(rSpeed * 1.5);
             talonRF.set(rSpeed * 1.5);
         } else {

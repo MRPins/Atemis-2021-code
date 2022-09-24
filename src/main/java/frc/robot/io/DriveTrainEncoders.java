@@ -27,7 +27,7 @@ public class DriveTrainEncoders {
 
     public double getDistancePassedLeftM() {
         if (Robot.isReal()) {
-            return -talonLF.getSelectedSensorPosition() / Constants.TALON_FX_PPR / Constants.DRIVE_GEAR_RATIO * Constants.DRIVE_WHEEL_CIRCUMEFERENCE_M;
+            return talonLF.getSelectedSensorPosition() / Constants.TALON_FX_PPR / Constants.DRIVE_GEAR_RATIO * Constants.DRIVE_WHEEL_CIRCUMEFERENCE_M;
         } else {
             return driveTrainSim.getLeftPositionMeters() - robotZeroPositionLeft;
         }

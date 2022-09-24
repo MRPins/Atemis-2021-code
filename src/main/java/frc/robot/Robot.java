@@ -15,13 +15,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.commands.AutomaticShootingCommand;
+import frc.robot.commands.CollectAndMoveDown;
+import frc.robot.commands.CollectorCollectCommand;
 import frc.robot.commands.CollectorPneumaticLiftCommand;
 import frc.robot.commands.CollectorPneumaticLowerCommand;
 import frc.robot.commands.ConveyorCommand;
 import frc.robot.commands.DriveDistance;
-import frc.robot.commands.AutomaticShootingCommand;
-import frc.robot.commands.CollectAndMoveDown;
-import frc.robot.commands.CollectorCollectCommand;
 import frc.robot.commands.FeedCommand;
 import frc.robot.commands.LimeLightTowerAngle;
 import frc.robot.commands.MoveElevatorDown;
@@ -138,9 +138,6 @@ public class Robot extends TimedRobot {
         new POVButton(controller, 90)
                 .whileHeld(new MoveElevatorDown(elevatorSystem));
 
-                
-
-
         SmartDashboard.putData("Reset Tower Pos", new InstantCommand(()-> towerSystem.resetTowerPosition()));
         SmartDashboard.putData("Reset Driver Pos", new InstantCommand(()-> driveSystem.resetEncoders()));
 
@@ -194,13 +191,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        //
+
     }
 
     @Override
     public void teleopPeriodic() {
-        /*SmartDashboard.putNumber("Comp", compressor.getAnalogVoltage());
-        SmartDashboard.putBoolean("Comp2", compressor.getPressureSwitchValue());*/
+
     }
 
     @Override
@@ -237,22 +233,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        CommandScheduler.getInstance().cancelAll();
-        feed.setBoolean(false);
+
     }
 
     @Override
     public void testPeriodic() {
-        double rpm = setpoint.getDouble(0);
-        shootSystem.ShootAtRpm(rpm);
 
-
-        if (feed.getBoolean(false)) {
-                feederSystem.StartLiftToShooterMotor();
-                feederSystem.Convoyer();
-        } else {
-                feederSystem.StopLiftMotor();
-                feederSystem.StopFeeder();
-        }
     }
 }

@@ -5,43 +5,42 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ElevatorSystem extends SubsystemBase {
-  
-  WPI_TalonFX elevateR;
-  WPI_TalonFX elevateL;
 
-  Solenoid solenoidL;
-  
-  public ElevatorSystem() {
-    elevateL = new  WPI_TalonFX(16);
-    elevateR = new  WPI_TalonFX(15);
+    private WPI_TalonFX elevateR;
+    private WPI_TalonFX elevateL;
+    private Solenoid solenoidL;
 
-    elevateL.setInverted(true);
+    public ElevatorSystem() {
+        elevateL = new WPI_TalonFX(16);
+        elevateR = new WPI_TalonFX(15);
 
-    solenoidL = new Solenoid(PneumaticsModuleType.CTREPCM, 7);
-  }
-    
-  public void MoveUp(){
-    elevateL.set(1);
-    elevateR.set(1);
-  }
+        elevateL.setInverted(true);
 
-  public void MoveDown(){
-    elevateL.set(-1);
-    elevateR.set(-1);
-  }
+        solenoidL = new Solenoid(PneumaticsModuleType.CTREPCM, 7);
+    }
 
-  public void Stop(){
-    elevateL.set(0);
-    elevateR.set(0);;
-  }
+    public void MoveUp() {
+        elevateL.set(1);
+        elevateR.set(1);
+    }
 
-  public void toggle(){
-    solenoidL.toggle();
-  }   
+    public void MoveDown() {
+        elevateL.set(-1);
+        elevateR.set(-1);
+    }
+
+    public void Stop() {
+        elevateL.set(0);
+        elevateR.set(0);
+        ;
+    }
+
+    public void toggle() {
+        solenoidL.toggle();
+    }
 }

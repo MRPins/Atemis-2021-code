@@ -37,6 +37,7 @@ public class DriveDistance extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("STOP: " + interrupted);
     driveSystem.Stop();
   }
 

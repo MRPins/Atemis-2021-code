@@ -1,54 +1,69 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-
-import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
-
-import java.net.Inet4Address;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.EntryNotification;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.RobotCharacteristics;
+import frc.robot.io.ShooterEncoder;
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ShootSystem extends SubsystemBase {
 
-    TalonFX shootRMotor;
-    TalonFX shootLMotor;
+    private WPI_TalonFX shootRMotor;
+    private WPI_TalonFX shootLMotor;
     public UnivariateFunction interpolation;
 
+    private final FlywheelSim flywheelSim;
+    private final PIDController pidControllerSim;
+    private final ShooterEncoder encoder;
 
     public ShootSystem() {
-        shootLMotor = new TalonFX(9);
-        shootRMotor = new TalonFX(8);
+        shootLMotor = new WPI_TalonFX(9);
+        shootRMotor = new WPI_TalonFX(8);
 
         shootLMotor.setInverted(true);
 
         shootRMotor.set(TalonFXControlMode.Follower, 9);
 
-        shootLMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
-        shootLMotor.config_kP(0, 0.17);
-        shootLMotor.config_kI(0, 0.0005);
-        shootLMotor.config_kD(0, 0.0001);
-        shootLMotor.config_kF(0, 0);
+        if (Robot.isSimulation()) {
+            flywheelSim = new FlywheelSim(
+                    RobotCharacteristics.SHOOTER_MOTORS,
+                    RobotCharacteristics.SHOOTER_MOTOR_TO_WHEEL_GEAR_RATIO,
+                    RobotCharacteristics.SHOOTER_MOMENT_OF_INERTIA
+            );
 
-        shootLMotor.configPeakOutputForward(1);
-        shootLMotor.configPeakOutputReverse(0);
-        shootLMotor.configNominalOutputForward(0);
-        shootLMotor.configNominalOutputReverse(0);
+            pidControllerSim = new PIDController(0.17, 0.0005, 0.0001, 0.02);
+        } else {
+            flywheelSim = null;
+            pidControllerSim = null;
+
+            shootLMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
+            shootLMotor.config_kP(0, 0.17);
+            shootLMotor.config_kI(0, 0.0005);
+            shootLMotor.config_kD(0, 0.0001);
+            shootLMotor.config_kF(0, 0);
+
+            shootLMotor.configPeakOutputForward(1);
+            shootLMotor.configPeakOutputReverse(0);
+            shootLMotor.configNominalOutputForward(0);
+            shootLMotor.configNominalOutputReverse(0);
+        }
+
+        encoder = new ShooterEncoder(shootLMotor, flywheelSim);
+
         interpolation = createInterpolationFunction();
 
         /*NetworkTable pid = NetworkTableInstance.getDefault().getTable("pid");
@@ -76,29 +91,38 @@ public class ShootSystem extends SubsystemBase {
     }
 
     public double getShooterRpm() {
-        return shootLMotor.getSelectedSensorVelocity() / Constants.TALON_FX_PPR * 600 * Constants.SHOOTER_GEAR_RATIO; 
+        return encoder.getShooterRpm();
     }
 
     public void ShootAtRpm(double rpm){
-        double velocity;
-
-        velocity = rpm / 600 * Constants.TALON_FX_PPR / Constants.SHOOTER_GEAR_RATIO;
-        
-        shootLMotor.set(TalonFXControlMode.Velocity, velocity);
+        if (Robot.isReal()) {
+            double velocity = rpm / 600 * Constants.TALON_FX_PPR / Constants.SHOOTER_GEAR_RATIO;
+            shootLMotor.set(ControlMode.Velocity, velocity);
+        } else {
+            double output = pidControllerSim.calculate(getShooterRpm(), rpm);
+            output = MathUtil.clamp(output, 0, 1);
+            shootLMotor.set(output);
+        }
     }
 
     public void Shoot(double speed){
-        shootLMotor.set(TalonFXControlMode.PercentOutput, speed);
+        shootLMotor.set(speed);
         SmartDashboard.putNumber("Shooter Voltage", shootLMotor.getMotorOutputVoltage());
     }
 
     public void shootVoltage(double voltage) {
-        shootLMotor.set(TalonFXControlMode.PercentOutput, voltage / RobotController.getBatteryVoltage());
+        shootLMotor.set(voltage / RobotController.getBatteryVoltage());
     }
 
     public void StopShoot(){
-        shootLMotor.set(ControlMode.PercentOutput, 0);
-        shootRMotor.set(ControlMode.PercentOutput, 0);
+        shootLMotor.set(0);
+        shootRMotor.set(0);
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        flywheelSim.setInputVoltage(shootLMotor.get() * RobotController.getBatteryVoltage());
+        flywheelSim.update(0.02);
     }
 
     private static UnivariateFunction createInterpolationFunction() {
