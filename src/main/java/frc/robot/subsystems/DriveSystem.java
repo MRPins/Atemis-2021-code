@@ -48,8 +48,8 @@ public class DriveSystem extends SubsystemBase {
 
             talonLF.setInverted(false);
             talonLR.setInverted(false);
-            talonRF.setInverted(false);
-            talonRR.setInverted(false);
+            talonRF.setInverted(true);
+            talonRR.setInverted(true);
         }
 
         field = new Field2d();

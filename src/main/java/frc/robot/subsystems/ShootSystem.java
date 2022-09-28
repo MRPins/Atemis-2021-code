@@ -6,6 +6,10 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -50,7 +54,7 @@ public class ShootSystem extends SubsystemBase {
             flywheelSim = null;
             pidControllerSim = null;
 
-            shootLMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
+            /*shootLMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
             shootLMotor.config_kP(0, 0.17);
             shootLMotor.config_kI(0, 0.0005);
             shootLMotor.config_kD(0, 0.0001);
@@ -59,14 +63,14 @@ public class ShootSystem extends SubsystemBase {
             shootLMotor.configPeakOutputForward(1);
             shootLMotor.configPeakOutputReverse(0);
             shootLMotor.configNominalOutputForward(0);
-            shootLMotor.configNominalOutputReverse(0);
+            shootLMotor.configNominalOutputReverse(0);*/
         }
 
         encoder = new ShooterEncoder(shootLMotor, flywheelSim);
 
         interpolation = createInterpolationFunction();
 
-        /*NetworkTable pid = NetworkTableInstance.getDefault().getTable("pid");
+        NetworkTable pid = NetworkTableInstance.getDefault().getTable("pid");
         NetworkTableEntry kp = pid.getEntry("kp");
         kp.setDouble(0);
         NetworkTableEntry ki = pid.getEntry("ki");
@@ -87,7 +91,7 @@ public class ShootSystem extends SubsystemBase {
         }, EntryListenerFlags.kUpdate);
         kf.addListener((notification)-> {
             shootLMotor.config_kF(0, notification.value.getDouble());
-        }, EntryListenerFlags.kUpdate);*/
+        }, EntryListenerFlags.kUpdate);
     }
 
     public double getShooterRpm() {

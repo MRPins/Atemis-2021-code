@@ -28,6 +28,8 @@ import frc.robot.commands.MoveElevatorDown;
 import frc.robot.commands.MoveElevatorUp;
 import frc.robot.commands.NewAutomaticShootingCommand;
 import frc.robot.commands.NewDriveCommand;
+import frc.robot.commands.ShootAtRpm;
+import frc.robot.commands.ShootWithWheelsCommand;
 import frc.robot.commands.ShooterTowerMoveCommand;
 import frc.robot.commands.TogglePressure;
 import frc.robot.commands.UnLoadCommand;
@@ -124,11 +126,11 @@ public class Robot extends TimedRobot {
                 .whileHeld(new ConveyorCommand(feederSystem));
         new JoystickButton(seccontroller, PS4Controller.Button.kCross.value)
                 .whileHeld(new UnLoadCommand(feederSystem, collectorsystem));
-        /*new JoystickButton(seccontroller, PS4Controller.Button.kCircle.value)
-                .whileHeld(new ShootAtRpm(shootSystem, 920)); //215cm = 8.388 Voltage*/
+        new JoystickButton(seccontroller, PS4Controller.Button.kCircle.value)
+                .whileHeld(new ShootAtRpm(shootSystem, 800)); //215cm = 8.388 Voltage*/
 
-        new JoystickButton(seccontroller, PS4Controller.Button.kR2.value)
-                .whileHeld(new AutomaticShootingCommand(shootSystem, limeLightImageProcessing));
+        /*new JoystickButton(seccontroller, PS4Controller.Button.kR2.value)
+                .whileHeld(new AutomaticShootingCommand(shootSystem, limeLightImageProcessing));*/
 
 
         new JoystickButton(controller, PS4Controller.Button.kCircle.value)
@@ -238,6 +240,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-
+        new ShootSystem().ShootAtRpm(800);
     }
 }
