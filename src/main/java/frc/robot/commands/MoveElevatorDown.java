@@ -26,7 +26,7 @@ public class MoveElevatorDown extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-    elevatorSystem.Stop();
+    elevatorSystem.stop();
   }
 
   @Override

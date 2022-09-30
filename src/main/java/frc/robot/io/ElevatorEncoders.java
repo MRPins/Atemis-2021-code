@@ -7,6 +7,7 @@ package frc.robot.io;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -19,28 +20,66 @@ public class ElevatorEncoders extends SubsystemBase {
   private final SingleJointedArmSim armSim;
 
   private double robotZeroPosition;
+  private boolean pass180;
   
   public ElevatorEncoders(WPI_TalonFX elevateR, WPI_TalonFX elevateL, SingleJointedArmSim armSim) {
     this.elevateL = elevateL;
     this.elevateR = elevateR;
     this.armSim = armSim;
-    this.robotZeroPosition = 0;
+    pass180 = false;
   }
 
   
   public double getDistancePassedLeft() {
+    double pos = Math.abs(Math.cos(Math.toDegrees(armSim.getAngleRads())) - 1);
     if (Robot.isReal()) {
-        return Math.toRadians(elevateL.getSelectedSensorPosition() / Constants.TALON_FX_PPR * 360);
+        return elevateL.getSelectedSensorPosition() / Constants.TALON_FX_PPR * 360;
     } else {
-        return armSim.getAngleRads() - robotZeroPosition;
+        
+        if (pos > 2){
+            pass180 = true;
+        }
+
+        if (pass180 && Math.cos(Math.toDegrees(armSim.getAngleRads())) < 0){
+            pos = Math.abs(Math.cos(Math.toDegrees(armSim.getAngleRads())) + 3);
+        }
+        else if (pass180 && Math.cos(Math.toDegrees(armSim.getAngleRads())) > 0){
+            pos = Math.cos(Math.toDegrees(armSim.getAngleRads())) + 3;
+        }
+        else if (pos < 0){
+            pos = Math.abs(Math.cos(Math.toDegrees(armSim.getAngleRads()))) + 1;
+        }
+        
+        return (pos - robotZeroPosition) / Constants.TALON_FX_PPR * 360;
     }
 }
 
 public double getDistancePassedRight() {
+
+    double pos = Math.abs(Math.cos(Math.toDegrees(armSim.getAngleRads())) - 1);
+    
     if (Robot.isReal()) {
         return elevateR.getSelectedSensorPosition() / Constants.TALON_FX_PPR * 360;
     } else {
-        return armSim.getAngleRads() - robotZeroPosition;
+        
+        if (pos > 1.9){
+            pass180 = true;
+        }
+
+        if (pass180 && Math.cos(Math.toDegrees(armSim.getAngleRads())) < 0){
+            pos = Math.abs(Math.cos(Math.toDegrees(armSim.getAngleRads())) + 3);
+        }
+        else if (pass180 && Math.cos(Math.toDegrees(armSim.getAngleRads())) > 0){
+            pos = Math.cos(Math.toDegrees(armSim.getAngleRads())) + 3;
+        }
+        else if (pos > 0){
+            pos = Math.abs(Math.cos(Math.toDegrees(armSim.getAngleRads())) - 1);
+        }
+        else if (pos < 0){
+            pos = Math.abs(Math.cos(Math.toDegrees(armSim.getAngleRads()))) + 1;
+        }
+
+        return (pos - robotZeroPosition) / Constants.TALON_FX_PPR * 360;
     }
 }
 
@@ -49,8 +88,7 @@ public void resetEncoders() {
         elevateL.setSelectedSensorPosition(0);
         elevateR.setSelectedSensorPosition(0);
     } else {
-        this.robotZeroPosition = armSim.getAngleRads();
-        this.robotZeroPosition = armSim.getAngleRads();
+        robotZeroPosition = 0;
     }
 }
 

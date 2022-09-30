@@ -23,7 +23,6 @@ public class TogglePressure extends CommandBase {
   @Override
   public void execute() {
     elevatorSystem.toggle();
-    System.out.println("WAAAA");
   }
 
   @Override

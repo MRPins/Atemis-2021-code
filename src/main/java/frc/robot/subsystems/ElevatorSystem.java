@@ -68,7 +68,7 @@ public class ElevatorSystem extends SubsystemBase {
         elevateR.set(-1);
     }
 
-    public void Stop() {
+    public void stop() {
         elevateL.set(0);
         elevateR.set(0);
     }
