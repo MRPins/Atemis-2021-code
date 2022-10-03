@@ -28,6 +28,7 @@ import frc.robot.commands.MoveElevatorDown;
 import frc.robot.commands.MoveElevatorUp;
 import frc.robot.commands.NewAutomaticShootingCommand;
 import frc.robot.commands.NewDriveCommand;
+import frc.robot.commands.ShootWithWheelsCommand;
 import frc.robot.commands.ShooterTowerMoveCommand;
 import frc.robot.commands.TogglePressure;
 import frc.robot.commands.UnLoadCommand;
@@ -116,8 +117,8 @@ public class Robot extends TimedRobot {
                 .whileHeld(new CollectorCollectCommand(collectorsystem, feederSystem));
         new JoystickButton(seccontroller, PS4Controller.Button.kR1.value)
                 .whileHeld(new FeedCommand(feederSystem));
-        /*new JoystickButton(seccontroller, PS4Controller.Button.kR2.value)
-                .whenActive(new ShootWithWheelsCommand(shootSystem, seccontroller, shootSystem.getShooterRpm()));*/
+        new JoystickButton(seccontroller, PS4Controller.Button.kR2.value)
+                .whenActive(new ShootWithWheelsCommand(shootSystem, seccontroller, shootSystem.getShooterRpm()));
         new JoystickButton(seccontroller, PS4Controller.Button.kTriangle.value)
                 .whenActive(new LimeLightTowerAngle(limeLightImageProcessing, towerSystem));
         new JoystickButton(seccontroller, PS4Controller.Button.kSquare.value)
