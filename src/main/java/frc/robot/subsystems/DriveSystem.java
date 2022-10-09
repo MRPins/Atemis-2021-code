@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -59,29 +61,7 @@ public class DriveSystem extends SubsystemBase {
         resetEncoders();
     }
 
-    public void arcadeDrive(double moveValue, double rotateValue) {
-        double rSpeed, lSpeed;
-
-        if (moveValue > 0.0) {
-            if (rotateValue > 0.0) {
-                lSpeed = moveValue - rotateValue;
-                rSpeed = Math.max(moveValue, rotateValue);
-            } else {
-                lSpeed = Math.max(moveValue, -rotateValue);
-                rSpeed = moveValue + rotateValue;
-            }
-        } else {
-            if (rotateValue > 0.0) {
-                lSpeed = -Math.max(-moveValue, rotateValue);
-                rSpeed = moveValue + rotateValue;
-            } else {
-                lSpeed = moveValue - rotateValue;
-                rSpeed = -Math.max(-moveValue, -rotateValue);
-            }
-        }
-
-        drive_func(lSpeed, rSpeed);
-    }
+   
 
     public double getDistancePassedLeftM() {
         return encoders.getDistancePassedLeftM();
@@ -99,19 +79,12 @@ public class DriveSystem extends SubsystemBase {
         encoders.resetEncoders();
     }
 
-
-    public void drive_func(double lSpeed, double rSpeed) {
-        if (lSpeed > Constants.MIN_SPEED || lSpeed < -Constants.MIN_SPEED || rSpeed < -Constants.MIN_SPEED || rSpeed > Constants.MIN_SPEED) {
-            talonLR.set(lSpeed * 1.5);
-            talonLF.set(lSpeed * 1.5);
-            talonRR.set(rSpeed * 1.5);
-            talonRF.set(rSpeed * 1.5);
-        } else {
-            talonLR.set(0);
-            talonLF.set(0);
-            talonRR.set(0);
-            talonRF.set(0);
-        }
+    public void drive(double lSpeed, double rSpeed) {
+       
+            talonLR.set(lSpeed);
+            talonLF.set(lSpeed);
+            talonRR.set(rSpeed);
+            talonRF.set(rSpeed);
 
     }
 
